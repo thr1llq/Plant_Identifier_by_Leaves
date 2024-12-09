@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка изображения</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card card-default"></div>
+    <div class="inputbox">
+        <input class="inputbox__input" id="inputfile" name="upload-file" type="file">
+        <label class="inputbox__button" for="inputfile">
+            <span class="inputbox-button__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                    <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
+                </svg>
+            </span>
+        </label>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    const inputbox = document.querySelector(".inputbox");
+    const inputFile = document.querySelector("#inputfile");
+
+    const renderCard = async ({ target: { files } }) => {
+        if (files[0]) {
+            const image = await dataURL2Base64(files[0]);
+            const element = document.createElement("div");
+            element.classList.add("card");
+            element.style.backgroundImage = `url(${image})`;
+            inputbox.insertAdjacentElement("beforebegin", element);
+        }
+    };
+
+    const dataURL2Base64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    inputFile.addEventListener("change", renderCard);
+
+    new Sortable(document.querySelector(".container"), {
+        animation: 350,
+        draggable: ".card"
+    });
+</script>
+
+</body>
+</html>
